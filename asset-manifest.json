@@ -1,0 +1,20 @@
+{
+  "files": {
+    "main.css": "/life-blood/static/css/main.16d56a16.chunk.css",
+    "main.js": "/life-blood/static/js/main.2244c53e.chunk.js",
+    "main.js.map": "/life-blood/static/js/main.2244c53e.chunk.js.map",
+    "runtime-main.js": "/life-blood/static/js/runtime-main.429e456a.js",
+    "runtime-main.js.map": "/life-blood/static/js/runtime-main.429e456a.js.map",
+    "static/js/2.11ee104b.chunk.js": "/life-blood/static/js/2.11ee104b.chunk.js",
+    "static/js/2.11ee104b.chunk.js.map": "/life-blood/static/js/2.11ee104b.chunk.js.map",
+    "index.html": "/life-blood/index.html",
+    "static/css/main.16d56a16.chunk.css.map": "/life-blood/static/css/main.16d56a16.chunk.css.map",
+    "static/js/2.11ee104b.chunk.js.LICENSE.txt": "/life-blood/static/js/2.11ee104b.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.429e456a.js",
+    "static/js/2.11ee104b.chunk.js",
+    "static/css/main.16d56a16.chunk.css",
+    "static/js/main.2244c53e.chunk.js"
+  ]
+}
