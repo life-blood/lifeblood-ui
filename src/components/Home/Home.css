@@ -1,0 +1,33 @@
+.main {
+  width: 100%;
+  padding: 0 2.5rem 2.5rem 2.5rem;
+}
+
+.header {
+  margin-top: 2rem;
+}
+
+.cards {
+  width: 100%;
+  margin: .5rem 0;  
+}
+
+.cards>ui5-card {
+  padding: .5rem 1rem .5rem 0;
+  min-width: 15rem;
+  max-width: 25rem;
+}
+
+.flex {
+  display: inline-flex; 
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+@media only screen and (max-width: 879px) {
+  .cards>ui5-card {
+    padding-right: 0;
+    min-width: 100%;
+    max-width: 100%;
+  }
+}
