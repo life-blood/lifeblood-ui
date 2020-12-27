@@ -50,7 +50,7 @@ class DonateDialog extends Component {
 
   render() {
     return (
-      <ui5-dialog header-text="Donation Requst" ref={this.dialogRef}>
+      <ui5-dialog header-text="Donation Request" ref={this.dialogRef}>
         <div className="dialog-container">
           <ui5-messagestrip type="Information" no-close-button>When you send the request, the blood center will contact you for appointment.</ui5-messagestrip>
           <ui5-title level="H4">Where would you like to donate?</ui5-title>

@@ -20,21 +20,21 @@ class Donate extends Component {
     this.state = {
       search: '',
       donations: [{
-        id: "1",
+        id: 1,
         date: "23.02.2020",
         amount: "140 mil.",
         location: "РАЙОНЕН Ц-Р ПО ТРАНСФУЗИОННА ХЕМАТОЛОГИЯ - Стара Загора",
         status: "Completed"
       },
       {
-        id: "2",
+        id: 2,
         date: "12.08.2020",
         amount: "310 mil.",
         location: "РАЙОНЕН Ц-Р ПО ТРАНСФУЗИОННА ХЕМАТОЛОГИЯ - Стара Загора",
         status: "Completed"
       },
       {
-        id: "3",
+        id: 3,
         date: "23.12.2020",
         amount: "",
         location: "РАЙОНЕН Ц-Р ПО ТРАНСФУЗИОННА ХЕМАТОЛОГИЯ - Стара Загора",
@@ -85,7 +85,7 @@ class Donate extends Component {
 
   isSearched(search, item) {
     for (const [key, value] of Object.entries(item)) {
-      if (value.toLowerCase().includes(search.toLowerCase())) {
+      if (value.toString().toLowerCase().includes(search.toLowerCase())) {
         return true;
       }
     }

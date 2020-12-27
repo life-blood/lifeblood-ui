@@ -23,6 +23,7 @@ class Patients extends Component {
       search: '',
       patients: [
         {
+          id: "1",
           name: "Ivan Ivanov",
           age: 21,
           sex: "Male",
@@ -75,7 +76,7 @@ class Patients extends Component {
 
   isSearched(search, item) {
     for (const [key, value] of Object.entries(item)) {
-      if (value.toLowerCase().includes(search.toLowerCase())) {
+      if (value.toString().toLowerCase().includes(search.toLowerCase())) {
         return true;
       }
     }
