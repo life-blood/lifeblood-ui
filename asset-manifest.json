@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/lifeblood-ui/static/css/main.16d56a16.chunk.css",
-    "main.js": "/lifeblood-ui/static/js/main.569a7e66.chunk.js",
-    "main.js.map": "/lifeblood-ui/static/js/main.569a7e66.chunk.js.map",
+    "main.js": "/lifeblood-ui/static/js/main.acb5ce28.chunk.js",
+    "main.js.map": "/lifeblood-ui/static/js/main.acb5ce28.chunk.js.map",
     "runtime-main.js": "/lifeblood-ui/static/js/runtime-main.7db6ad66.js",
     "runtime-main.js.map": "/lifeblood-ui/static/js/runtime-main.7db6ad66.js.map",
     "static/js/2.11ee104b.chunk.js": "/lifeblood-ui/static/js/2.11ee104b.chunk.js",
@@ -23,6 +23,6 @@
     "static/js/runtime-main.7db6ad66.js",
     "static/js/2.11ee104b.chunk.js",
     "static/css/main.16d56a16.chunk.css",
-    "static/js/main.569a7e66.chunk.js"
+    "static/js/main.acb5ce28.chunk.js"
   ]
 }
