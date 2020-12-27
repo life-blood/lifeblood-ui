@@ -87,7 +87,7 @@ class Login extends Component {
           </header>
           {register ?
             <>
-              <ui5-panel header-text="Personal">
+              <ui5-panel header-text="Personal Information">
                 <ui5-input type="Text" placeholder="Full Name" />
                 <ui5-input type="Tel" placeholder="Telephone" />
                 <div className="inline-container">
@@ -104,7 +104,7 @@ class Login extends Component {
                   </ui5-combobox>
                 </div>
               </ui5-panel>
-              <ui5-panel header-text="Account">
+              <ui5-panel header-text="Account Information">
                 <ui5-input type="Email" placeholder="Email" />
                 <ui5-input type="Password" placeholder="Password" />
                 <ui5-input type="Password" placeholder="Confirm Password" />
