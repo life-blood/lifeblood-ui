@@ -24,6 +24,7 @@ class Login extends Component {
 
     this.createAccountLinkRef = React.createRef();
     this.submitButtonRef = React.createRef();
+    this.userEmailRef = React.createRef();
 
     this.onCreateAccountClick = this.onCreateAccountClick.bind(this);
     this.submit = this.submit.bind(this);
@@ -32,6 +33,8 @@ class Login extends Component {
   }
 
   login() {
+    const user = this.userEmailRef.current.value;
+    localStorage.setItem('userID', user);
     this.props.auth.authenticate(() => {
       this.setState(() => ({
         redirectToReferrer: true
@@ -111,7 +114,7 @@ class Login extends Component {
               </ui5-panel>
             </> :
             <>
-              <ui5-input type="Email" placeholder="Email" />
+              <ui5-input ref={this.userEmailRef} type="Email" placeholder="Email" />
               <ui5-input type="Password" placeholder="Password" />
             </>
           }

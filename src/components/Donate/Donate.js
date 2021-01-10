@@ -11,6 +11,7 @@ import "@ui5/webcomponents-icons/dist/search";
 import "../Home/Home.css";
 import "./Donate.css";
 import DonateDialog from './DonateDialog';
+import { BLOOD_BANK_API } from './../../app-config'
 
 class Donate extends Component {
 
@@ -19,41 +20,31 @@ class Donate extends Component {
 
     this.state = {
       search: '',
-      donations: [{
-        id: 1,
-        date: "23.02.2020",
-        amount: "140 mil.",
-        location: "РАЙОНЕН Ц-Р ПО ТРАНСФУЗИОННА ХЕМАТОЛОГИЯ - Стара Загора",
-        status: "Completed"
-      },
-      {
-        id: 2,
-        date: "12.08.2020",
-        amount: "310 mil.",
-        location: "РАЙОНЕН Ц-Р ПО ТРАНСФУЗИОННА ХЕМАТОЛОГИЯ - Стара Загора",
-        status: "Completed"
-      },
-      {
-        id: 3,
-        date: "23.12.2020",
-        amount: "",
-        location: "РАЙОНЕН Ц-Р ПО ТРАНСФУЗИОННА ХЕМАТОЛОГИЯ - Стара Загора",
-        status: "In Progress"
-      }
-      ]
+      loading: true,
+      donations: []
     }
 
     this.searchRef = React.createRef();
     this.donateDialogRef = React.createRef();
     this.donateButtonRef = React.createRef();
-
     this.search = this.search.bind(this);
     this.isSearched = this.isSearched.bind(this);
     this.filterDonations = this.filterDonations.bind(this);
     this.openDonateDialog = this.openDonateDialog.bind(this);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    const url = BLOOD_BANK_API + '/donations/';
+    const response = await fetch(url, {
+      method: 'GET',
+    });
+    const data = await response.json();
+    console.debug(data);
+    this.setState(() => ({
+      loading: false,
+      donations: data,
+    }));
+
     if (this.searchRef.current) {
       this.searchRef.current.addEventListener("input", this.search);
     }
@@ -93,9 +84,17 @@ class Donate extends Component {
   }
 
   render() {
-    const { search, donations } = this.state;
+    const { search, donations, loading } = this.state;
 
     let filteredDonations = this.filterDonations(donations);
+
+    if (loading) {
+      return (
+        <div className="loading-container">
+          <ui5-busyindicator active size="Medium"></ui5-busyindicator>
+        </div>
+      )
+    } 
 
     return (
       <div className="main">
@@ -120,10 +119,10 @@ class Donate extends Component {
             Status
           </ui5-table-column>
           {filteredDonations.map(donation =>
-            <ui5-table-row key={donation.id}>
+            <ui5-table-row key={donation.donationID}>
               <ui5-table-cell>{donation.date}</ui5-table-cell>
-              <ui5-table-cell>{donation.location}</ui5-table-cell>
-              <ui5-table-cell>{donation.amount}</ui5-table-cell>
+              <ui5-table-cell>{donation.bloodcenter}</ui5-table-cell>
+              <ui5-table-cell>{donation.Amount}</ui5-table-cell>
               <ui5-table-cell>{donation.status}</ui5-table-cell>
             </ui5-table-row>
           )}
