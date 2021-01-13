@@ -21,6 +21,8 @@ class DonateDialog extends Component {
     this.createButtonRef = React.createRef();
     this.cancelButtonRef = React.createRef();
 
+    console.log(props);
+    this.onCreateSuccess = props.onCreateSucess;
     this.create = this.create.bind(this);
     this.close = this.close.bind(this);
     this.onComboboxChange = this.onComboboxChange.bind(this);
@@ -32,7 +34,9 @@ class DonateDialog extends Component {
       this.cancelButtonRef.current.addEventListener("click", this.close);
     }
 
-    this.comboboxRef.current.addEventListener('change', this.onComboboxChange);
+    if (this.comboboxRef.current) {
+      this.comboboxRef.current.addEventListener('change', this.onComboboxChange);
+    }
   }
 
   componentWillUnmount() {
@@ -65,17 +69,22 @@ class DonateDialog extends Component {
 
   create() {
     const hospital = this.state.selectedHospital;
+
     if (hospital) {
+      const today = new Date(),
+      date = today.getDate() +  '.' + (today.getMonth() + 1) + '.' + today.getFullYear();
       const url = BLOOD_BANK_API + '/donations/';
       fetch(url, {
         method: 'POST',
         body: JSON.stringify({
           "userID": localStorage.getItem("userID") || "",
           "bloodcenter": hospital,
+          "date": date,
           "status": "In Progress"
         })
       }).then(() => {
-        console.log("Your donation request sent successfully! Please refresh to see the latest status")
+        console.log("Your donation request sent successfully!");
+        this.onCreateSuccess();
       }, (err) => {
         console.error(err);
         console.log("Failed to create donation request.");

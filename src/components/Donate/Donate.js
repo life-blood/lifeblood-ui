@@ -20,30 +20,22 @@ class Donate extends Component {
 
     this.state = {
       search: '',
-      loading: true,
       donations: []
     }
 
     this.searchRef = React.createRef();
     this.donateDialogRef = React.createRef();
     this.donateButtonRef = React.createRef();
+    this.loadingRef = React.createRef();
     this.search = this.search.bind(this);
     this.isSearched = this.isSearched.bind(this);
+    this.fetchData = this.fetchData.bind(this);
     this.filterDonations = this.filterDonations.bind(this);
     this.openDonateDialog = this.openDonateDialog.bind(this);
   }
 
-  async componentDidMount() {
-    const url = BLOOD_BANK_API + '/donations/';
-    const response = await fetch(url, {
-      method: 'GET',
-    });
-    const data = await response.json();
-    console.debug(data);
-    this.setState(() => ({
-      loading: false,
-      donations: data,
-    }));
+  componentDidMount() {
+    this.fetchData();
 
     if (this.searchRef.current) {
       this.searchRef.current.addEventListener("input", this.search);
@@ -83,18 +75,33 @@ class Donate extends Component {
     return false;
   }
 
+  async fetchData() {
+    this.loadingRef.current.active = true;
+
+    const url = BLOOD_BANK_API + '/donations/';
+    const response = await fetch(url, {
+      method: 'GET',
+    });
+    const data = await response.json();
+    console.log(data);
+    this.setState(() => ({
+      loading: false,
+      donations: data,
+    }));
+
+    this.loadingRef.current.active = false;
+  }
+  
+
+
   render() {
     const { search, donations, loading } = this.state;
 
     let filteredDonations = this.filterDonations(donations);
 
-    if (loading) {
-      return (
-        <div className="loading-container">
-          <ui5-busyindicator active size="Medium"></ui5-busyindicator>
-        </div>
-      )
-    } 
+    function refreshData() {
+      this.fetchData();
+    }
 
     return (
       <div className="main">
@@ -105,29 +112,31 @@ class Donate extends Component {
         <ui5-input ref={this.searchRef} id="searchInput" value={search} placeholder="Search">
           <ui5-icon slot="icon" name="search"></ui5-icon>
         </ui5-input>
-        <ui5-table show-no-data no-data-text="No donatations found.">
-          <ui5-table-column slot="columns">
-            Date
-          </ui5-table-column>
-          <ui5-table-column slot="columns" min-width="700" popin-text="Blood Center" demand-popin>
-            Blood Center
-          </ui5-table-column>
-          <ui5-table-column slot="columns" min-width="600" popin-text="Amount" demand-popin>
-            Amount
-          </ui5-table-column>
-          <ui5-table-column slot="columns">
-            Status
-          </ui5-table-column>
-          {filteredDonations.map(donation =>
-            <ui5-table-row key={donation.donationID}>
-              <ui5-table-cell>{donation.date}</ui5-table-cell>
-              <ui5-table-cell>{donation.bloodcenter}</ui5-table-cell>
-              <ui5-table-cell>{donation.Amount}</ui5-table-cell>
-              <ui5-table-cell>{donation.status}</ui5-table-cell>
-            </ui5-table-row>
-          )}
-        </ui5-table>
-        <DonateDialog ref={this.donateDialogRef} />
+        <ui5-busyindicator ref={this.loadingRef} size="Medium">
+          <ui5-table show-no-data no-data-text="No donatations found.">
+            <ui5-table-column slot="columns">
+              Date
+            </ui5-table-column>
+            <ui5-table-column slot="columns" min-width="700" popin-text="Blood Center" demand-popin>
+              Blood Center
+            </ui5-table-column>
+            <ui5-table-column slot="columns" min-width="600" popin-text="Amount" demand-popin>
+              Amount
+            </ui5-table-column>
+            <ui5-table-column slot="columns">
+              Status
+            </ui5-table-column>
+            {filteredDonations.map(donation =>
+              <ui5-table-row key={donation.donationID}>
+                <ui5-table-cell>{donation.date}</ui5-table-cell>
+                <ui5-table-cell>{donation.bloodcenter}</ui5-table-cell>
+                <ui5-table-cell>{donation.amount}</ui5-table-cell>
+                <ui5-table-cell>{donation.status}</ui5-table-cell>
+              </ui5-table-row>
+            )}
+          </ui5-table>
+        </ui5-busyindicator>
+        <DonateDialog ref={this.donateDialogRef} onCreateSucess={refreshData.bind(this)} />
       </div>
     )
   }
