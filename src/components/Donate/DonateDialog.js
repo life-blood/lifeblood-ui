@@ -21,7 +21,6 @@ class DonateDialog extends Component {
     this.createButtonRef = React.createRef();
     this.cancelButtonRef = React.createRef();
 
-    console.log(props);
     this.onCreateSuccess = props.onCreateSucess;
     this.create = this.create.bind(this);
     this.close = this.close.bind(this);

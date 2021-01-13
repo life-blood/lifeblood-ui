@@ -75,21 +75,25 @@ class Donate extends Component {
     return false;
   }
 
-  async fetchData() {
+  fetchData() {
     this.loadingRef.current.active = true;
 
     const url = BLOOD_BANK_API + '/donations/';
-    const response = await fetch(url, {
+    fetch(url, {
       method: 'GET',
-    });
-    const data = await response.json();
-    console.log(data);
-    this.setState(() => ({
-      loading: false,
-      donations: data,
-    }));
-
-    this.loadingRef.current.active = false;
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      this.setState(() => ({
+        loading: false,
+        donations: data,
+      }));
+  
+      this.loadingRef.current.active = false;
+    }).catch((err) => {
+      console.error(err);
+    });    
   }
   
 
