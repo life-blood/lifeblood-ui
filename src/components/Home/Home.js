@@ -22,11 +22,26 @@ import article6Img from '../../images/home/articles/article-6.jpg';
 
 class Home extends Component {
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      user: ''
+    };
+  }
+
+  componentDidMount() {
+    const user = localStorage.getItem('userID');
+    this.setState({ user });
+  }
+
   render() {
+    const { user } = this.state;
+
     return (
       <>
         <div className="main">
-          <ui5-title class="header" level="H3">Welcome, Ivan!</ui5-title>
+          <ui5-title class="header" level="H3">Welcome, {user}!</ui5-title>
           <div className="cards flex">
             <ui5-card heading="9 210" subheading="Saved Lifes">
               <img src={heartImg} slot="avatar" />

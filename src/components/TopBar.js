@@ -90,6 +90,10 @@ class TopBar extends Component {
           </ui5-tab>
           <ui5-tab text="Donate" data-id="/donate">
           </ui5-tab>
+          <ui5-tab text="Donations" data-id="/donations">
+          </ui5-tab>
+          <ui5-tab text="Donors" data-id="/donors">
+          </ui5-tab>
           <ui5-tab text="Patients" data-id="/patients">
           </ui5-tab>
           <ui5-tab text="Map" data-id="/map">

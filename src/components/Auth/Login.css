@@ -38,11 +38,11 @@ h4 {
   font-weight: normal;
 }
 
-ui5-input, ui5-combobox {
+ui5-input, ui5-combobox, ui5-select {
   border: 0;
 }
 
-ui5-input, ui5-combobox {
+ui5-input, ui5-combobox, ui5-select {
   width: 100%;
   margin-bottom: 1.5rem;
   border-bottom: 2px solid #6f6f6f;

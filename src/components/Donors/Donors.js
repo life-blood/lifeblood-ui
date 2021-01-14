@@ -11,19 +11,18 @@ import "@ui5/webcomponents-icons/dist/edit";
 import "@ui5/webcomponents-icons/dist/delete";
 
 import "../Home/Home.css";
-import "./Patients.css";
-import PatientDialog from './PatientDialog';
+import "./Donors.css";
 import DeleteDialog from './DeleteDialog';
+import DonorDialog from './DonorDialog';
 
-class Patients extends Component {
+class Donors extends Component {
 
   constructor(props) {
     super(props);
 
     this.state = {
       search: '',
-      editMode: false,
-      patients: [
+      donors: [
         {
           id: "1",
           name: "Ivan Ivanov",
@@ -46,15 +45,13 @@ class Patients extends Component {
     }
 
     this.searchRef = React.createRef();
-    this.newPatientDialogRef = React.createRef();
-    this.newPatientButtonRef = React.createRef();
+    this.donorsDialogRef = React.createRef();
     this.deleteDialogRef = React.createRef();
 
     this.search = this.search.bind(this);
     this.isSearched = this.isSearched.bind(this);
-    this.filteredPatients = this.filteredPatients.bind(this);
-    this.openPatientDialog = this.openPatientDialog.bind(this);
-    this.onCreate = this.onCreate.bind(this);
+    this.filteredDonors = this.filteredDonors.bind(this);
+    this.openDonorsDialog = this.openDonorsDialog.bind(this);
     this.onEdit = this.onEdit.bind(this);
     this.onDelete = this.onDelete.bind(this);
     this.fetch = this.fetch.bind(this);
@@ -63,9 +60,6 @@ class Patients extends Component {
   componentDidMount() {
     if (this.searchRef.current) {
       this.searchRef.current.addEventListener("input", this.search);
-    }
-    if (this.newPatientButtonRef.current) {
-      this.newPatientButtonRef.current.addEventListener("click", this.onCreate);
     }
 
     const editButtons = document.getElementsByClassName('editButton') || [];
@@ -79,9 +73,6 @@ class Patients extends Component {
     if (this.searchRef.current) {
       this.searchRef.current.removeEventListener("input", this.search);
     }
-    if (this.newPatientButtonRef.current) {
-      this.newPatientButtonRef.current.removeEventListener("click", this.onCreate);
-    }
 
     const editButtons = document.getElementsByClassName('editButton') || [];
     Array.from(editButtons).forEach((button) => button.removeEventListener("click", this.onDelete));
@@ -90,34 +81,28 @@ class Patients extends Component {
     Array.from(deleteButtons).forEach((button) => button.removeEventListener("click", this.onDelete));
   }
 
-  onCreate() {
-    this.setState({ editMode: false });
-    this.openPatientDialog();
-  }
-
   onEdit(event) {
-    const patientId = event.target.getAttribute('data-id');
-    const patient = this.state.patients.filter(patient => patient.id === patientId)[0];
+    const donorId = event.target.getAttribute('data-id');
+    const donor = this.state.donors.filter(donor => donor.id === donorId)[0];
 
-    this.setState({ editMode: true });
-    this.openPatientDialog(patient);
+    this.openDonorsDialog(donor);
   }
 
   onDelete(event) {
-    const patientId = event.target.getAttribute('data-id');
-    this.deleteDialogRef.current.open(patientId);
+    const donorId = event.target.getAttribute('data-id');
+    this.deleteDialogRef.current.open(donorId);
   }
 
-  openPatientDialog(patient) {
-    this.newPatientDialogRef.current.open(patient);
+  openDonorsDialog(donor) {
+    this.donorsDialogRef.current.open(donor);
   }
 
   search(event) {
     this.setState({ search: event.target.value });
   }
 
-  filteredPatients(patients) {
-    return patients.filter(patient => this.isSearched(this.state.search, patient));
+  filteredDonors(donors) {
+    return donors.filter(donor => this.isSearched(this.state.search, donor));
   }
 
   isSearched(search, item) {
@@ -134,20 +119,19 @@ class Patients extends Component {
   }
 
   render() {
-    const { search, patients } = this.state;
+    const { search, donors } = this.state;
 
-    let filteredPatients = this.filteredPatients(patients);
+    let filteredDonors = this.filteredDonors(donors);
 
     return (
       <div className="main">
         <div className="inline-container spaceBetween">
-          <ui5-title class="header" level="h2">Patients</ui5-title>
-          <ui5-button ref={this.newPatientButtonRef} class="header" icon="add" design="Emphasized" >Add Patient</ui5-button>
+          <ui5-title class="header" level="h2">Donors</ui5-title>
         </div>
         <ui5-input ref={this.searchRef} id="searchInput" value={search} placeholder="Search">
           <ui5-icon slot="icon" name="search"></ui5-icon>
         </ui5-input>
-        <ui5-table show-no-data no-data-text="No patients found.">
+        <ui5-table show-no-data no-data-text="No donors found.">
           <ui5-table-column slot="columns">
             Full Name
           </ui5-table-column>
@@ -169,26 +153,26 @@ class Patients extends Component {
           <ui5-table-column slot="columns">
             Actions
           </ui5-table-column>
-          {filteredPatients.map(patient =>
-            <ui5-table-row key={patient.id}>
-              <ui5-table-cell>{patient.name}</ui5-table-cell>
-              <ui5-table-cell>{patient.age}</ui5-table-cell>
-              <ui5-table-cell>{patient.sex}</ui5-table-cell>
-              <ui5-table-cell>{patient.blood}</ui5-table-cell>
-              <ui5-table-cell>{patient.center}</ui5-table-cell>
-              <ui5-table-cell>{patient.telephone}</ui5-table-cell>
+          {filteredDonors.map(donor =>
+            <ui5-table-row key={donor.id}>
+              <ui5-table-cell>{donor.name}</ui5-table-cell>
+              <ui5-table-cell>{donor.age}</ui5-table-cell>
+              <ui5-table-cell>{donor.sex}</ui5-table-cell>
+              <ui5-table-cell>{donor.blood}</ui5-table-cell>
+              <ui5-table-cell>{donor.center}</ui5-table-cell>
+              <ui5-table-cell>{donor.telephone}</ui5-table-cell>
               <ui5-table-cell>
-                <ui5-button data-id={patient.id} class="editButton" design="Transparent" icon="edit"></ui5-button>
-                <ui5-button data-id={patient.id} class="deleteButton" design="Transparent" icon="delete"></ui5-button>
+                <ui5-button data-id={donor.id} class="editButton" design="Transparent" icon="edit"></ui5-button>
+                <ui5-button data-id={donor.id} class="deleteButton" design="Transparent" icon="delete"></ui5-button>
               </ui5-table-cell>
             </ui5-table-row>
           )}
         </ui5-table>
-        <PatientDialog edit={this.state.editMode} ref={this.newPatientDialogRef} />
+        <DonorDialog edit ref={this.donorsDialogRef} />
         <DeleteDialog ref={this.deleteDialogRef} doRefresh={this.fetch}></DeleteDialog>
       </div>
     )
   }
 }
 
-export default Patients;
+export default Donors;

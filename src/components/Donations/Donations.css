@@ -1,0 +1,18 @@
+.spaceBetween {
+  justify-content: space-between;
+}
+
+#searchInput {
+  width: 25%;
+  margin: 2rem 0 1rem 0;
+}
+
+ui5-busyindicator {
+  display: block;
+}
+
+@media only screen and (max-width: 879px) {
+  #searchInput {
+    width: 100%;
+  }
+}
