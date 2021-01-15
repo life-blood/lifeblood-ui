@@ -15,7 +15,12 @@ import { BLOOD_BANK_API } from '../../app-config'
 
 const STATUS = [
   "In Progress",
-  "Completed"
+  "Completed",
+  "Completed - 300mil.",
+  "Completed - 350mil.",
+  "Completed - 400mil.",
+  "Completed - 450mil.",
+  "Completed - 500mil.",
 ]
 
 class Donations extends Component {
@@ -30,6 +35,7 @@ class Donations extends Component {
 
     this.searchRef = React.createRef();
     this.loadingRef = React.createRef();
+    this.selectRef = React.createRef();
 
     this.search = this.search.bind(this);
     this.isSearched = this.isSearched.bind(this);
@@ -59,8 +65,35 @@ class Donations extends Component {
   }
 
   onSelectChange(event) {
-    console.log(event)
-    console.log("PUT request");
+    const donorId = event.target.getAttribute('data-id');
+    const donorInfo = this.state.donations.find(donation => donation.donationId.toString() === donorId);
+    if (!donorInfo) {
+      console.error("No donor info found!");
+      return;
+    }
+
+    const selectValues = event.target.selectedOption.textContent.split('-');
+    const newStatus = selectValues[0]?.trim() || '';
+    let newAmount = donorInfo.amount;
+    if (selectValues.length > 1) {
+      newAmount = selectValues[1]?.trim() || '';
+    }
+
+    const newData = {
+      ...donorInfo,
+      status: newStatus,
+      amount: newAmount,
+    };
+
+    console.log(newData)
+    const url = BLOOD_BANK_API + `/donations/${donorId}`;
+    fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(newData),
+    })
+    .then(() => {
+      this.fetchData();
+    })
   }
 
   search(event) {
@@ -101,7 +134,9 @@ class Donations extends Component {
       });
   }
 
-
+  selectChange(event) {
+    console.log(event)
+  }
 
   render() {
     const { search, donations, loading } = this.state;
@@ -153,10 +188,12 @@ class Donations extends Component {
                 <ui5-table-cell>{donation.bloodCenter}</ui5-table-cell>
                 <ui5-table-cell>{donation.amount}</ui5-table-cell>
                 <ui5-table-cell>
-                  <ui5-select class="selectStatus">
+                  <ui5-select onChange={event => {
+                    console.log('CHANGED!')
+                    console.log(event)
+                  }} class="selectStatus" data-id={donation.donationId}>
                     {STATUS.map((entry) => (
                       <ui5-option
-                        data-id={donation.donationId}
                         selected={entry === donation.status ? true : undefined}
                       >
                         {entry}

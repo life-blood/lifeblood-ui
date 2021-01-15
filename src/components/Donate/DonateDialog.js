@@ -79,9 +79,9 @@ class DonateDialog extends Component {
           "userID": localStorage.getItem("userID") || "",
           "bloodcenter": hospital,
           "date": date,
-          // TODO: Future work to provide UI support for setting Amount and Blood Type.
+          // TODO: Save current user BloodType on login and reuse it.
           "bloodType": "A",
-          "amount": "400mil.",
+          "amount": "-",
           "status": "In Progress"
         })
       }).then(() => {
