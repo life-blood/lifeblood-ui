@@ -56,10 +56,10 @@ class Donations extends Component {
 
     const selectStatus = document.getElementsByClassName('selectStatus') || [];
     Array.from(selectStatus).forEach((select) => select.removeEventListener("change", this.onSelectChange));
-
   }
 
-  onSelectChange() {
+  onSelectChange(event) {
+    console.log(event)
     console.log("PUT request");
   }
 
@@ -83,7 +83,7 @@ class Donations extends Component {
   async fetchData() {
     this.loadingRef.current.active = true;
 
-    const url = BLOOD_BANK_API + '/donations/';
+    const url = BLOOD_BANK_API + '/donations';
     return fetch(url, {
       method: 'GET',
     })
@@ -111,43 +111,65 @@ class Donations extends Component {
     return (
       <div className="main">
         <div className="inline-container spaceBetween">
-          <ui5-title class="header" level="h2">Donations</ui5-title>
+          <ui5-title class="header" level="h2">
+            Donations
+          </ui5-title>
         </div>
-        <ui5-input ref={this.searchRef} id="searchInput" value={search} placeholder="Search">
+        <ui5-input
+          ref={this.searchRef}
+          id="searchInput"
+          value={search}
+          placeholder="Search"
+        >
           <ui5-icon slot="icon" name="search"></ui5-icon>
         </ui5-input>
         <ui5-busyindicator ref={this.loadingRef} size="Medium">
           <ui5-table show-no-data no-data-text="No donatations found.">
-            <ui5-table-column slot="columns">
-              Date
-            </ui5-table-column>
-            <ui5-table-column slot="columns" min-width="700" popin-text="Blood Center" demand-popin>
+            <ui5-table-column slot="columns">ID</ui5-table-column>
+            <ui5-table-column slot="columns">Date</ui5-table-column>
+            <ui5-table-column slot="columns">Blood type</ui5-table-column>
+            <ui5-table-column
+              slot="columns"
+              min-width="700"
+              popin-text="Blood Center"
+              demand-popin
+            >
               Blood Center
             </ui5-table-column>
-            <ui5-table-column slot="columns" min-width="600" popin-text="Amount" demand-popin>
+            <ui5-table-column
+              slot="columns"
+              min-width="600"
+              popin-text="Amount"
+              demand-popin
+            >
               Amount
             </ui5-table-column>
-            <ui5-table-column slot="columns">
-              Status
-            </ui5-table-column>
-            {filteredDonations.map(donation =>
-              <ui5-table-row key={donation.donationID}>
+            <ui5-table-column slot="columns">Status</ui5-table-column>
+            {filteredDonations.map((donation) => (
+              <ui5-table-row key={donation.donationId}>
+                <ui5-table-cell>{donation.donationId}</ui5-table-cell>
                 <ui5-table-cell>{donation.date}</ui5-table-cell>
-                <ui5-table-cell>{donation.bloodcenter}</ui5-table-cell>
+                <ui5-table-cell>{donation.bloodType}</ui5-table-cell>
+                <ui5-table-cell>{donation.bloodCenter}</ui5-table-cell>
                 <ui5-table-cell>{donation.amount}</ui5-table-cell>
                 <ui5-table-cell>
                   <ui5-select class="selectStatus">
-                    {STATUS.map(entry =>
-                      <ui5-option selected={entry === donation.status ? true : undefined}>{entry}</ui5-option>
-                    )}
+                    {STATUS.map((entry) => (
+                      <ui5-option
+                        data-id={donation.donationId}
+                        selected={entry === donation.status ? true : undefined}
+                      >
+                        {entry}
+                      </ui5-option>
+                    ))}
                   </ui5-select>
                 </ui5-table-cell>
               </ui5-table-row>
-            )}
+            ))}
           </ui5-table>
         </ui5-busyindicator>
       </div>
-    )
+    );
   }
 }
 

@@ -19,6 +19,7 @@ class Donate extends Component {
     super(props);
 
     this.state = {
+      userId: '',
       search: '',
       donations: []
     }
@@ -26,16 +27,22 @@ class Donate extends Component {
     this.searchRef = React.createRef();
     this.donateDialogRef = React.createRef();
     this.donateButtonRef = React.createRef();
+    this.deleteBtnRef = React.createRef();
     this.loadingRef = React.createRef();
+
     this.search = this.search.bind(this);
     this.isSearched = this.isSearched.bind(this);
     this.fetchData = this.fetchData.bind(this);
     this.filterDonations = this.filterDonations.bind(this);
+    this.onDelete = this.onDelete.bind(this);
     this.openDonateDialog = this.openDonateDialog.bind(this);
   }
 
   componentDidMount() {
-    this.fetchData();
+    const userId = localStorage.getItem('userID');
+    this.setState({ userId: userId });
+
+    this.fetchData(userId);
 
     if (this.searchRef.current) {
       this.searchRef.current.addEventListener("input", this.search);
@@ -58,6 +65,17 @@ class Donate extends Component {
     this.donateDialogRef.current.open();
   }
 
+  onDelete(event) {
+    const donationId = event.target.getAttribute('data-id');
+    const url = BLOOD_BANK_API + `/donations/${donationId}`;
+    fetch(url, {
+      method: 'DELETE',
+    })
+    .then(() => {
+      this.fetchData(this.state.userId);
+    });    
+  }
+
   search(event) {
     this.setState({ search: event.target.value });
   }
@@ -75,10 +93,10 @@ class Donate extends Component {
     return false;
   }
 
-  fetchData() {
+  fetchData(userId) {
     this.loadingRef.current.active = true;
 
-    const url = BLOOD_BANK_API + '/donations/';
+    const url = BLOOD_BANK_API + `/donations?userId=${userId}`;
     fetch(url, {
       method: 'GET',
     })
@@ -89,28 +107,28 @@ class Donate extends Component {
         loading: false,
         donations: data,
       }));
-  
+
       this.loadingRef.current.active = false;
+      const deleteButtons = document.getElementsByClassName('deleteButton') || [];
+      Array.from(deleteButtons).forEach((button) => button.addEventListener("click", this.onDelete));
     }).catch((err) => {
       console.error(err);
     });    
   }
-  
-
 
   render() {
-    const { search, donations, loading } = this.state;
+    const { search, donations, userId } = this.state;
 
     let filteredDonations = this.filterDonations(donations);
 
     function refreshData() {
-      this.fetchData();
+      this.fetchData(this.state.userId);
     }
 
     return (
       <div className="main">
         <div className="inline-container spaceBetween">
-          <ui5-title class="header" level="h2">My Donations</ui5-title>
+          <ui5-title class="header" level="h2">My Donations {userId} </ui5-title>
           <ui5-button ref={this.donateButtonRef} class="header" icon="add" design="Emphasized" >Donate</ui5-button>
         </div>
         <ui5-input ref={this.searchRef} id="searchInput" value={search} placeholder="Search">
@@ -130,12 +148,18 @@ class Donate extends Component {
             <ui5-table-column slot="columns">
               Status
             </ui5-table-column>
+            <ui5-table-column slot="columns">
+              Actions
+            </ui5-table-column>
             {filteredDonations.map(donation =>
-              <ui5-table-row key={donation.donationID}>
+              <ui5-table-row key={donation.donationId}>
                 <ui5-table-cell>{donation.date}</ui5-table-cell>
-                <ui5-table-cell>{donation.bloodcenter}</ui5-table-cell>
+                <ui5-table-cell>{donation.bloodCenter}</ui5-table-cell>
                 <ui5-table-cell>{donation.amount}</ui5-table-cell>
                 <ui5-table-cell>{donation.status}</ui5-table-cell>
+                <ui5-table-cell>
+                  <ui5-button data-id={donation.donationId} ref={this.deleteBtnRef} class="deleteButton" design="Transparent" icon="delete"></ui5-button>
+                </ui5-table-cell>
               </ui5-table-row>
             )}
           </ui5-table>

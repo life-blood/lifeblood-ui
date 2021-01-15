@@ -72,13 +72,16 @@ class DonateDialog extends Component {
     if (hospital) {
       const today = new Date(),
       date = today.getDate() +  '.' + (today.getMonth() + 1) + '.' + today.getFullYear();
-      const url = BLOOD_BANK_API + '/donations/';
+      const url = BLOOD_BANK_API + '/donations';
       fetch(url, {
         method: 'POST',
         body: JSON.stringify({
           "userID": localStorage.getItem("userID") || "",
           "bloodcenter": hospital,
           "date": date,
+          // TODO: Future work to provide UI support for setting Amount and Blood Type.
+          "bloodType": "A",
+          "amount": "400mil.",
           "status": "In Progress"
         })
       }).then(() => {
