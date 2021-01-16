@@ -10,14 +10,6 @@ import { ACCOUNT_SERVICE_API } from "../../app-config";
 
 const BLOOD = ['0', 'A', 'B', 'AB'];
 const GENDER = ['Male', 'Female'];
-const CENTERS = [
-  "РАЙОНЕН Ц-Р ПО ТРАНСФУЗИОННА ХЕМАТОЛОГИЯ - Стара Загора",
-  "Районен център по трансфузионна хематология (РЦТХ) - Плевен",
-  "Кръвен център - Бургас",
-  "РЦ по трансфузионна хематология - Пловдив",
-  "Национален център по клинична и трансфузионна хематология - София",
-  "Районен център по трансфузионна хематология - Варна"
-];
 
 class PatientDialog extends Component {
 
@@ -29,7 +21,8 @@ class PatientDialog extends Component {
       lastName: '',
       bloodGroup: '',
       bloodCenter: '',
-      city: ''
+      city: '',
+      centers: window.mapsData.map((map)=> map.name)
     };
 
     this.dialogRef = React.createRef();
@@ -182,7 +175,7 @@ class PatientDialog extends Component {
 
   render() {
     const { edit } = this.props;
-    const { name, lastName, city, bloodGroup, bloodCenter } = this.state;
+    const { name, lastName, city, bloodGroup, bloodCenter, centers } = this.state;
 
     return (
       <ui5-dialog header-text={edit ? "Edit Patient" : "Add Patient"} ref={this.dialogRef}>
@@ -202,10 +195,10 @@ class PatientDialog extends Component {
           </div>
           <ui5-title level="H4">Blood Center</ui5-title>
           {edit ? <ui5-select ref={this.centerInputRef} placeholder="Blood Center" required>
-            {CENTERS.map(entry => <ui5-option selected={entry === bloodCenter ? true : undefined}>{entry}</ui5-option>)}
+            {centers.map(entry => <ui5-option selected={entry === bloodCenter ? true : undefined}>{entry}</ui5-option>)}
           </ui5-select> :
             <ui5-combobox ref={this.centerInputCbRef} placeholder="Choose Blood Center" required value={bloodCenter}>
-              {CENTERS.map(entry => <ui5-cb-item text={entry}></ui5-cb-item>)}
+              {centers.map(entry => <ui5-cb-item text={entry}></ui5-cb-item>)}
             </ui5-combobox>
           }
         </div>

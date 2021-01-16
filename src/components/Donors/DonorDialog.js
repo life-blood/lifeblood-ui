@@ -33,7 +33,7 @@ class DonorDialog extends Component {
     this.cancelButtonRef = React.createRef();
 
     this.nameInputRef = React.createRef();
-    this.lastNameInputRef - React.createRef();
+    this.lastNameInputRef = React.createRef();
     this.telephoneInputRef = React.createRef();
     this.emailInputRef = React.createRef();
     this.ageInputRef = React.createRef();
@@ -78,7 +78,7 @@ class DonorDialog extends Component {
       this.cancelButtonRef.current.addEventListener("click", this.close);
 
       this.nameInputRef.current.addEventListener("input", this.onNameChange);
-      // this.lastNameInputRef.current.addEventListener("input", this.onLastNameChange);
+      this.lastNameInputRef.current.addEventListener("input", this.onLastNameChange);
       this.telephoneInputRef.current.addEventListener("input", this.onTelephoneChange);
       this.emailInputRef.current.addEventListener("input", this.onEmailChange);
       this.cityInputRef.current.addEventListener("input", this.onAddressChange);
@@ -95,7 +95,7 @@ class DonorDialog extends Component {
       this.cancelButtonRef.current.removeEventListener("click", this.close);
 
       this.nameInputRef.current.removeEventListener("input", this.onNameChange);
-      // this.lastNameInputRef.current.removeEventListener("input", this.onLastNameChange);
+      this.lastNameInputRef.current.removeEventListener("input", this.onLastNameChange);
       this.emailInputRef.current.removeEventListener("input", this.onEmailChange);
       this.cityInputRef.current.removeEventListener("input", this.onAddressChange);
 

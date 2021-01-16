@@ -46,7 +46,6 @@ class DeleteDialog extends Component {
   }
 
   onDelete() {
-    // DELETE
     const url = ACCOUNT_SERVICE_API + `/donors/${this.state.donorId}`;
     console.log("donor ID: " + this.state.donorId);
     fetch(url, {
