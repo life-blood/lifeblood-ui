@@ -13,7 +13,7 @@ class DonateDialog extends Component {
 
     this.state = {
       selectedHospital: '',
-      hospitals: []
+      hospitals: this.props.hospitalNames,
     };
 
     this.dialogRef = React.createRef();
@@ -96,18 +96,18 @@ class DonateDialog extends Component {
   }
 
   render() {
+    const { hospitals } = this.state;
+    console.log(hospitals);
+
     return (
       <ui5-dialog header-text="Donation Request" ref={this.dialogRef}>
         <div className="dialog-container">
           <ui5-messagestrip type="Information" no-close-button>When you send the request, the blood center will contact you for appointment.</ui5-messagestrip>
           <ui5-title level="H4">Where would you like to donate?</ui5-title>
           <ui5-combobox ref={this.comboboxRef} placeholder="Choose Blood Center" required>
-            <ui5-cb-item text="РАЙОНЕН Ц-Р ПО ТРАНСФУЗИОННА ХЕМАТОЛОГИЯ - Стара Загора"></ui5-cb-item>
-            <ui5-cb-item text="Районен център по трансфузионна хематология (РЦТХ) - Плевен"></ui5-cb-item>
-            <ui5-cb-item text="Кръвен център - Бургас"></ui5-cb-item>
-            <ui5-cb-item text="РЦ по трансфузионна хематология - Пловдив"></ui5-cb-item>
-            <ui5-cb-item text="Национален център по клинична и трансфузионна хематология - София"></ui5-cb-item>
-            <ui5-cb-item text="Районен център по трансфузионна хематология - Варна"></ui5-cb-item>
+            {hospitals.map(hospitalName => (
+                <ui5-cb-item text={hospitalName}></ui5-cb-item>
+            ))}
           </ui5-combobox>
         </div>
         <div slot="footer" className="footer">

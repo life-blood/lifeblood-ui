@@ -21,7 +21,8 @@ class Donate extends Component {
     this.state = {
       userId: '',
       search: '',
-      donations: []
+      donations: [],
+      hospitals: window.mapsData.map(hosptital => hosptital.name),
     }
 
     this.searchRef = React.createRef();
@@ -40,7 +41,9 @@ class Donate extends Component {
 
   componentDidMount() {
     const userId = localStorage.getItem('userID');
-    this.setState({ userId: userId });
+    this.setState({ 
+      userId: userId,
+    });
 
     this.fetchData(userId);
 
@@ -117,7 +120,7 @@ class Donate extends Component {
   }
 
   render() {
-    const { search, donations, userId } = this.state;
+    const { search, donations, userId, hospitals } = this.state;
 
     let filteredDonations = this.filterDonations(donations);
 
@@ -164,7 +167,7 @@ class Donate extends Component {
             )}
           </ui5-table>
         </ui5-busyindicator>
-        <DonateDialog ref={this.donateDialogRef} onCreateSucess={refreshData.bind(this)} />
+        <DonateDialog ref={this.donateDialogRef} hospitalNames={hospitals} onCreateSucess={refreshData.bind(this)} />
       </div>
     )
   }

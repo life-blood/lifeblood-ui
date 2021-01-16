@@ -188,10 +188,7 @@ class Donations extends Component {
                 <ui5-table-cell>{donation.bloodCenter}</ui5-table-cell>
                 <ui5-table-cell>{donation.amount}</ui5-table-cell>
                 <ui5-table-cell>
-                  <ui5-select onChange={event => {
-                    console.log('CHANGED!')
-                    console.log(event)
-                  }} class="selectStatus" data-id={donation.donationId}>
+                  <ui5-select class="selectStatus" data-id={donation.donationId}>
                     {STATUS.map((entry) => (
                       <ui5-option
                         selected={entry === donation.status ? true : undefined}
