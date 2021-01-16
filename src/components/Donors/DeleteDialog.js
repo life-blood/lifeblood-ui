@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { ACCOUNT_SERVICE_API } from "../../app-config";
 
 import "@ui5/webcomponents/dist/Dialog";
 
@@ -46,9 +47,18 @@ class DeleteDialog extends Component {
 
   onDelete() {
     // DELETE
+    const url = ACCOUNT_SERVICE_API + `/donors/${this.state.donorId}`;
     console.log("donor ID: " + this.state.donorId);
+    fetch(url, {
+        method: 'DELETE'
+      }).then(() => {
+        console.log("Donor was removed successfully!");
+        this.props.doRefresh();
+      }, (err) => {
+        console.error(err);
+        console.log("Failed to remove donor.");
+      });
 
-    this.props.doRefresh();
     this.close();
   }
 

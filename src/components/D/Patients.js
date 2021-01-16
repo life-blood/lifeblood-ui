@@ -14,6 +14,7 @@ import "../Home/Home.css";
 import "./Patients.css";
 import PatientDialog from './PatientDialog';
 import DeleteDialog from './DeleteDialog';
+import { ACCOUNT_SERVICE_API } from "../../app-config";
 
 class Patients extends Component {
 
@@ -23,26 +24,7 @@ class Patients extends Component {
     this.state = {
       search: '',
       editMode: false,
-      patients: [
-        {
-          id: "1",
-          name: "Ivan Ivanov",
-          age: 21,
-          gender: "Male",
-          telephone: "+359881234567",
-          blood: "AB",
-          center: "Национален център по клинична и трансфузионна хематология - София"
-        },
-        {
-          id: "2",
-          name: "Ivana Ivanova",
-          age: 21,
-          gender: "Female",
-          telephone: "+359881234563",
-          blood: "B",
-          center: "Национален център по клинична и трансфузионна хематология - София"
-        }
-      ]
+      patients: []
     }
 
     this.searchRef = React.createRef();
@@ -57,7 +39,7 @@ class Patients extends Component {
     this.onCreate = this.onCreate.bind(this);
     this.onEdit = this.onEdit.bind(this);
     this.onDelete = this.onDelete.bind(this);
-    this.fetch = this.fetch.bind(this);
+    this.getAcceptors = this.getAcceptors.bind(this);
   }
 
   componentDidMount() {
@@ -68,11 +50,13 @@ class Patients extends Component {
       this.newPatientButtonRef.current.addEventListener("click", this.onCreate);
     }
 
-    const editButtons = document.getElementsByClassName('editButton') || [];
-    Array.from(editButtons).forEach((button) => button.addEventListener("click", this.onEdit));
+    // const editButtons = document.getElementsByClassName('editButton') || [];
+    // Array.from(editButtons).forEach((button) => button.addEventListener("click", this.onEdit));
 
-    const deleteButtons = document.getElementsByClassName('deleteButton') || [];
-    Array.from(deleteButtons).forEach((button) => button.addEventListener("click", this.onDelete));
+    // const deleteButtons = document.getElementsByClassName('deleteButton') || [];
+    // Array.from(deleteButtons).forEach((button) => button.addEventListener("click", this.onDelete));
+
+    this.getAcceptors();
   }
 
   componentWillUnmount() {
@@ -129,8 +113,24 @@ class Patients extends Component {
     return false;
   }
 
-  fetch() {
-    //FETCH DATA
+  getAcceptors() {
+    const url = ACCOUNT_SERVICE_API + '/acceptors';
+
+    fetch(url, {
+        method: 'GET',
+      }).then(response => response.json())
+        .then(data => {
+            console.log(data);
+            this.setState(() => ({
+              loading: false,
+              patients: data,
+            }));
+            const editButtons = document.getElementsByClassName('editButton') || [];
+            Array.from(editButtons).forEach((button) => button.addEventListener("click", this.onEdit));
+
+            const deleteButtons = document.getElementsByClassName('deleteButton') || [];
+            Array.from(deleteButtons).forEach((button) => button.addEventListener("click", this.onDelete));
+        });
   }
 
   render() {
@@ -149,16 +149,19 @@ class Patients extends Component {
         </ui5-input>
         <ui5-table show-no-data no-data-text="No patients found.">
           <ui5-table-column slot="columns">
-            Full Name
+           Name
+          </ui5-table-column>
+          <ui5-table-column slot="columns">
+           Last Name
           </ui5-table-column>
           <ui5-table-column slot="columns" min-width="600" popin-text="Age" demand-popin>
             Age
           </ui5-table-column>
-          <ui5-table-column slot="columns" min-width="600" popin-text="Sex" demand-popin>
-            Sex
+          <ui5-table-column slot="columns" min-width="600" popin-text="Gender" demand-popin>
+            Gender
           </ui5-table-column>
-          <ui5-table-column slot="columns" min-width="600" popin-text="Blood Type" demand-popin>
-            Blood Type
+          <ui5-table-column slot="columns" min-width="600" popin-text="Blood Group" demand-popin>
+            Blood Group
           </ui5-table-column>
           <ui5-table-column slot="columns" min-width="600" popin-text="Blood Center" demand-popin>
             Blood Center
@@ -172,11 +175,12 @@ class Patients extends Component {
           {filteredPatients.map(patient =>
             <ui5-table-row key={patient.id}>
               <ui5-table-cell>{patient.name}</ui5-table-cell>
+              <ui5-table-cell>{patient.lastName}</ui5-table-cell>
               <ui5-table-cell>{patient.age}</ui5-table-cell>
-              <ui5-table-cell>{patient.sex}</ui5-table-cell>
-              <ui5-table-cell>{patient.blood}</ui5-table-cell>
-              <ui5-table-cell>{patient.center}</ui5-table-cell>
-              <ui5-table-cell>{patient.telephone}</ui5-table-cell>
+              <ui5-table-cell>{patient.gender}</ui5-table-cell>
+              <ui5-table-cell>{patient.bloodGroup}</ui5-table-cell>
+              <ui5-table-cell>{patient.bloodCenter}</ui5-table-cell>
+              <ui5-table-cell>{patient.phone}</ui5-table-cell>
               <ui5-table-cell>
                 <ui5-button data-id={patient.id} class="editButton" design="Transparent" icon="edit"></ui5-button>
                 <ui5-button data-id={patient.id} class="deleteButton" design="Transparent" icon="delete"></ui5-button>
@@ -184,8 +188,8 @@ class Patients extends Component {
             </ui5-table-row>
           )}
         </ui5-table>
-        <PatientDialog edit={this.state.editMode} ref={this.newPatientDialogRef} />
-        <DeleteDialog ref={this.deleteDialogRef} doRefresh={this.fetch}></DeleteDialog>
+        <PatientDialog edit={this.state.editMode} ref={this.newPatientDialogRef} doRefresh={this.getAcceptors} />
+        <DeleteDialog ref={this.deleteDialogRef} doRefresh={this.getAcceptors}></DeleteDialog>
       </div>
     )
   }
