@@ -31,6 +31,15 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
   <title>LifeBlood</title>
+
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
+
+  <!-- TODO: Add SDKs for Firebase products that you want to use
+      https://firebase.google.com/docs/web/setup#available-libraries -->
+  <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-analytics.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-firestore.js"></script>
 </head>
 
 <body>
@@ -46,6 +55,33 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+
+  <script>
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    var firebaseConfig = {
+      apiKey: "AIzaSyCdqTUc_NESu4qNLojSfCSu9Ji6tc0vuKs",
+      authDomain: "lifeblood-9332a.firebaseapp.com",
+      databaseURL: "https://lifeblood-9332a-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "lifeblood-9332a",
+      storageBucket: "lifeblood-9332a.appspot.com",
+      messagingSenderId: "284563809665",
+      appId: "1:284563809665:web:df27142112370e4c3b7480",
+      measurementId: "G-12Q1LSRMR7"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+
+    function fetchMapsData() {
+      return firebase.database().ref('/hospital').once('value').then(data => {
+        window.mapsData = data.val();
+        console.log(window.mapsData);
+      });
+    }
+
+    fetchMapsData();
+  </script>
 </body>
 
 </html>
