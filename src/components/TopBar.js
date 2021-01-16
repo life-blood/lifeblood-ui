@@ -15,6 +15,10 @@ class TopBar extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      isAdmin: null
+    }
+
     this.shellBarRef = React.createRef();
     this.topBarRef = React.createRef();
     this.profilePopover = React.createRef();
@@ -27,6 +31,9 @@ class TopBar extends Component {
   }
 
   componentDidMount() {
+    const isAdmin = localStorage.getItem('userID').includes('@lifeblood.com');
+    this.setState({ isAdmin });
+
     if (this.topBarRef.current) {
       this.topBarRef.current.addEventListener("tab-select", this.selectTab);
       this.setSelectedTab();
@@ -75,6 +82,8 @@ class TopBar extends Component {
   }
 
   render() {
+    const { isAdmin } = this.state;
+
     return (
       <>
         <ui5-shellbar ref={this.shellBarRef}
@@ -88,16 +97,15 @@ class TopBar extends Component {
         <ui5-tabcontainer ref={this.topBarRef} fixed collapsed>
           <ui5-tab selected text="Home" data-id="/home">
           </ui5-tab>
-          <ui5-tab text="Donate" data-id="/donate">
-          </ui5-tab>
-          <ui5-tab text="Donations" data-id="/donations">
-          </ui5-tab>
-          <ui5-tab text="Donors" data-id="/donors">
-          </ui5-tab>
-          <ui5-tab text="Patients" data-id="/patients">
-          </ui5-tab>
-          <ui5-tab text="Map" data-id="/map">
-          </ui5-tab>
+          {!isAdmin && <ui5-tab text="Donate" data-id="/donate" />}
+          {isAdmin &&
+            <>
+              <ui5-tab text="Donations" data-id="/donations" />
+              <ui5-tab text="Donors" data-id="/donors" />
+              <ui5-tab text="Patients" data-id="/patients" />
+            </>
+          }
+          <ui5-tab text="Map" data-id="/map" />
         </ui5-tabcontainer>
       </>
     )
