@@ -14,6 +14,7 @@ import "../Home/Home.css";
 import "./Donors.css";
 import DeleteDialog from './DeleteDialog';
 import DonorDialog from './DonorDialog';
+import { ACCOUNT_SERVICE_API } from "../../app-config";
 
 class Donors extends Component {
 
@@ -22,26 +23,7 @@ class Donors extends Component {
 
     this.state = {
       search: '',
-      donors: [
-        {
-          id: "1",
-          name: "Ivan Ivanov",
-          age: 21,
-          gender: "Male",
-          telephone: "+359881234567",
-          blood: "AB",
-          center: "Национален център по клинична и трансфузионна хематология - София"
-        },
-        {
-          id: "2",
-          name: "Ivana Ivanova",
-          age: 21,
-          gender: "Female",
-          telephone: "+359881234563",
-          blood: "B",
-          center: "Национален център по клинична и трансфузионна хематология - София"
-        }
-      ]
+      donors: []
     }
 
     this.searchRef = React.createRef();
@@ -54,7 +36,7 @@ class Donors extends Component {
     this.openDonorsDialog = this.openDonorsDialog.bind(this);
     this.onEdit = this.onEdit.bind(this);
     this.onDelete = this.onDelete.bind(this);
-    this.fetch = this.fetch.bind(this);
+    this.getDonors = this.getDonors.bind(this);
   }
 
   componentDidMount() {
@@ -62,11 +44,7 @@ class Donors extends Component {
       this.searchRef.current.addEventListener("input", this.search);
     }
 
-    const editButtons = document.getElementsByClassName('editButton') || [];
-    Array.from(editButtons).forEach((button) => button.addEventListener("click", this.onEdit));
-
-    const deleteButtons = document.getElementsByClassName('deleteButton') || [];
-    Array.from(deleteButtons).forEach((button) => button.addEventListener("click", this.onDelete));
+    this.getDonors();
   }
 
   componentWillUnmount() {
@@ -106,16 +84,35 @@ class Donors extends Component {
   }
 
   isSearched(search, item) {
+    if (!search) {
+      return true
+    }
     for (const [key, value] of Object.entries(item)) {
-      if (value.toString().toLowerCase().includes(search.toLowerCase())) {
+      if (key.toString()==="bloodGroup" && value.toString().toLowerCase()===search.toLowerCase()) {
         return true;
       }
     }
     return false;
   }
 
-  fetch() {
-    //FETCH DATA
+  getDonors() {
+    const url = ACCOUNT_SERVICE_API + '/donors';
+
+    fetch(url, {
+        method: 'GET',
+      }).then(response => response.json())
+        .then(data => {
+            console.log(data);
+            this.setState(() => ({
+              loading: false,
+              donors: data,
+            }));
+            const editButtons = document.getElementsByClassName('editButton') || [];
+            Array.from(editButtons).forEach((button) => button.addEventListener("click", this.onEdit));
+
+            const deleteButtons = document.getElementsByClassName('deleteButton') || [];
+            Array.from(deleteButtons).forEach((button) => button.addEventListener("click", this.onDelete));
+        });
   }
 
   render() {
@@ -128,27 +125,33 @@ class Donors extends Component {
         <div className="inline-container spaceBetween">
           <ui5-title class="header" level="h2">Donors</ui5-title>
         </div>
-        <ui5-input ref={this.searchRef} id="searchInput" value={search} placeholder="Search">
+        <ui5-input ref={this.searchRef} id="searchInput" value={search} placeholder="Search by Blood Group">
           <ui5-icon slot="icon" name="search"></ui5-icon>
         </ui5-input>
         <ui5-table show-no-data no-data-text="No donors found.">
           <ui5-table-column slot="columns">
-            Full Name
+            Name
+          </ui5-table-column>
+          <ui5-table-column slot="columns">
+            Last Name
           </ui5-table-column>
           <ui5-table-column slot="columns" min-width="600" popin-text="Age" demand-popin>
             Age
           </ui5-table-column>
-          <ui5-table-column slot="columns" min-width="600" popin-text="Sex" demand-popin>
-            Sex
+          <ui5-table-column slot="columns" min-width="600" popin-text="Gender" demand-popin>
+            Gender
           </ui5-table-column>
           <ui5-table-column slot="columns" min-width="600" popin-text="Blood Type" demand-popin>
             Blood Type
           </ui5-table-column>
-          <ui5-table-column slot="columns" min-width="600" popin-text="Blood Center" demand-popin>
-            Blood Center
-          </ui5-table-column>
           <ui5-table-column slot="columns" min-width="600" popin-text="Actions" demand-popin>
             Telephone
+          </ui5-table-column>
+          <ui5-table-column slot="columns" min-width="600" popin-text="Actions" demand-popin>
+            City
+          </ui5-table-column>
+          <ui5-table-column slot="columns" min-width="600" popin-text="Actions" demand-popin>
+            Email
           </ui5-table-column>
           <ui5-table-column slot="columns">
             Actions
@@ -156,11 +159,13 @@ class Donors extends Component {
           {filteredDonors.map(donor =>
             <ui5-table-row key={donor.id}>
               <ui5-table-cell>{donor.name}</ui5-table-cell>
+              <ui5-table-cell>{donor.lastName}</ui5-table-cell>
               <ui5-table-cell>{donor.age}</ui5-table-cell>
-              <ui5-table-cell>{donor.sex}</ui5-table-cell>
-              <ui5-table-cell>{donor.blood}</ui5-table-cell>
-              <ui5-table-cell>{donor.center}</ui5-table-cell>
-              <ui5-table-cell>{donor.telephone}</ui5-table-cell>
+              <ui5-table-cell>{donor.gender}</ui5-table-cell>
+              <ui5-table-cell>{donor.bloodGroup}</ui5-table-cell>
+              <ui5-table-cell>{donor.phone}</ui5-table-cell>
+              <ui5-table-cell>{donor.city}</ui5-table-cell>
+              <ui5-table-cell>{donor.email}</ui5-table-cell>
               <ui5-table-cell>
                 <ui5-button data-id={donor.id} class="editButton" design="Transparent" icon="edit"></ui5-button>
                 <ui5-button data-id={donor.id} class="deleteButton" design="Transparent" icon="delete"></ui5-button>
@@ -168,8 +173,8 @@ class Donors extends Component {
             </ui5-table-row>
           )}
         </ui5-table>
-        <DonorDialog edit ref={this.donorsDialogRef} />
-        <DeleteDialog ref={this.deleteDialogRef} doRefresh={this.fetch}></DeleteDialog>
+        <DonorDialog edit ref={this.donorsDialogRef} doRefresh={this.getDonors} />
+        <DeleteDialog ref={this.deleteDialogRef} doRefresh={this.getDonors}></DeleteDialog>
       </div>
     )
   }

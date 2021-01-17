@@ -6,17 +6,11 @@ import "@ui5/webcomponents/dist/ComboBoxItem";
 import "@ui5/webcomponents/dist/Select";
 
 import "./DonorDialog.css";
+import { ACCOUNT_SERVICE_API } from "../../app-config";
 
 const BLOOD = ['0', 'A', 'B', 'AB'];
 const GENDER = ['Male', 'Female'];
-const CENTERS = [
-  "РАЙОНЕН Ц-Р ПО ТРАНСФУЗИОННА ХЕМАТОЛОГИЯ - Стара Загора",
-  "Районен център по трансфузионна хематология (РЦТХ) - Плевен",
-  "Кръвен център - Бургас",
-  "РЦ по трансфузионна хематология - Пловдив",
-  "Национален център по клинична и трансфузионна хематология - София",
-  "Районен център по трансфузионна хематология - Варна"
-];
+
 
 class DonorDialog extends Component {
 
@@ -25,11 +19,13 @@ class DonorDialog extends Component {
 
     this.state = {
       name: '',
-      telephone: '',
+      lastName: '',
+      phone: '',
       age: '',
+      email: '',
       gender: '',
-      blood: '',
-      center: ''
+      bloodGroup: '',
+      city: '',
     };
 
     this.dialogRef = React.createRef();
@@ -37,36 +33,42 @@ class DonorDialog extends Component {
     this.cancelButtonRef = React.createRef();
 
     this.nameInputRef = React.createRef();
+    this.lastNameInputRef = React.createRef();
     this.telephoneInputRef = React.createRef();
+    this.emailInputRef = React.createRef();
     this.ageInputRef = React.createRef();
     this.genderInputRef = React.createRef();
+    this.cityInputRef = React.createRef();
     this.genderInputCbRef = React.createRef();
     this.bloodInputRef = React.createRef();
     this.bloodInputCbRef = React.createRef();
-    this.centerInputRef = React.createRef();
-    this.centerInputCbRef = React.createRef();
 
     this.create = this.create.bind(this);
     this.close = this.close.bind(this);
     this.setInitialState = this.setInitialState.bind(this);
 
     this.onNameChange = this.onNameChange.bind(this);
+    this.onLastNameChange = this.onLastNameChange.bind(this);
     this.onTelephoneChange = this.onTelephoneChange.bind(this);
     this.onAgeChange = this.onAgeChange.bind(this);
+    this.onEmailChange = this.onEmailChange.bind(this);
     this.onGenderChange = this.onGenderChange.bind(this);
     this.onBloodChange = this.onBloodChange.bind(this);
-    this.onCenterChange = this.onCenterChange.bind(this);
+    this.onAddressChange = this.onAddressChange.bind(this);
     this.beforeOpen = this.beforeOpen.bind(this);
   }
 
   setInitialState() {
     this.setState({
+      id : '',
       name: '',
-      telephone: '',
+      lastName: '',
+      phone: '',
       age: '',
       gender: '',
-      blood: '',
-      center: ''
+      bloodGroup: '',
+      email: '',
+      city: ''
     });
   }
 
@@ -76,8 +78,14 @@ class DonorDialog extends Component {
       this.cancelButtonRef.current.addEventListener("click", this.close);
 
       this.nameInputRef.current.addEventListener("input", this.onNameChange);
+      this.lastNameInputRef.current.addEventListener("input", this.onLastNameChange);
       this.telephoneInputRef.current.addEventListener("input", this.onTelephoneChange);
-      this.ageInputRef.current.addEventListener("input", this.onAgeChange);
+      this.emailInputRef.current.addEventListener("input", this.onEmailChange);
+      this.cityInputRef.current.addEventListener("input", this.onAddressChange);
+      this.bloodInputRef.current.addEventListener("change", this.onBloodChange);
+      this.genderInputRef.current.addEventListener("change", this.onGenderChange);
+      this.ageInputRef.current.addEventListener("change", this.onAgeChange);
+
     }
   }
 
@@ -87,17 +95,19 @@ class DonorDialog extends Component {
       this.cancelButtonRef.current.removeEventListener("click", this.close);
 
       this.nameInputRef.current.removeEventListener("input", this.onNameChange);
+      this.lastNameInputRef.current.removeEventListener("input", this.onLastNameChange);
+      this.emailInputRef.current.removeEventListener("input", this.onEmailChange);
+      this.cityInputRef.current.removeEventListener("input", this.onAddressChange);
+
       this.telephoneInputRef.current.removeEventListener("input", this.onTelephoneChange);
       this.ageInputRef.current.removeEventListener("input", this.onAgeChange);
     }
     if (this.props.edit) {
       this.genderInputRef.current.removeEventListener("change", this.onGenderChange);
       this.bloodInputRef.current.removeEventListener("change", this.onBloodChange);
-      this.centerInputRef.current.removeEventListener("change", this.onCenterChange);
     } else {
       this.genderInputCbRef.current.removeEventListener("change", this.onGenderChange);
       this.bloodInputCbRef.current.removeEventListener("change", this.onBloodChange);
-      this.centerInputCbRef.current.removeEventListener("change", this.onCenterChange);
     }
   }
 
@@ -105,18 +115,16 @@ class DonorDialog extends Component {
     if (this.props.edit) {
       this.genderInputRef.current.addEventListener("change", this.onGenderChange);
       this.bloodInputRef.current.addEventListener("change", this.onBloodChange);
-      this.centerInputRef.current.addEventListener("change", this.onCenterChange);
     } else {
       this.genderInputCbRef.current.addEventListener("change", this.onGenderChange);
       this.bloodInputCbRef.current.addEventListener("change", this.onBloodChange);
-      this.centerInputCbRef.current.addEventListener("change", this.onCenterChange);
     }
   }
 
-  open(patient) {
+  open(donor) {
     this.beforeOpen();
 
-    patient ? this.setState({ ...patient }) : this.setInitialState();
+    donor ? this.setState({ ...donor }) : this.setInitialState();
 
     this.dialogRef.current.open();
   }
@@ -126,6 +134,26 @@ class DonorDialog extends Component {
   }
 
   create() {
+    const url = ACCOUNT_SERVICE_API + `/donors/${this.state.id}`;
+    fetch(url, {
+        method: 'PUT',
+        body: JSON.stringify({
+            "name": this.state.name,
+            "lastName": this.state.lastName,
+            "email": this.state.email,
+            "phone": this.state.phone,
+            "age": this.state.age,
+            "gender": this.state.gender,
+            "bloodGroup": this.state.bloodGroup,
+            "city": this.state.city
+        })
+      }).then(() => {
+        console.log("Donor was edited successfully!");
+        this.props.doRefresh();
+      }, (err) => {
+        console.error(err);
+        console.log("Failed to edit donor.");
+      });
     this.close();
   }
 
@@ -133,8 +161,20 @@ class DonorDialog extends Component {
     this.setState({ name: event.target.value });
   }
 
+  onLastNameChange(event) {
+    this.setState({ lastName: event.target.value });
+  }
+
+  onAddressChange(event) {
+    this.setState({ city: event.target.value });
+  }
+
+  onEmailChange(event) {
+    this.setState({ email: event.target.value });
+  }
+
   onTelephoneChange(event) {
-    this.setState({ telephone: event.target.value });
+    this.setState({ phone: event.target.value });
   }
 
   onAgeChange(event) {
@@ -146,23 +186,23 @@ class DonorDialog extends Component {
   }
 
   onBloodChange(event) {
-    this.setState({ blood: event.target.value || event.target.selectedOption.innerText });
+    this.setState({ bloodGroup: event.target.value || event.target.selectedOption.innerText });
   }
 
-  onCenterChange(event) {
-    this.setState({ center: event.target.value || event.target.selectedOption.innerText });
-  }
 
   render() {
     const { edit } = this.props;
-    const { name, telephone, gender, age, blood, center } = this.state;
+    const { name, lastName, phone, city, email, gender, age, bloodGroup } = this.state;
 
     return (
       <ui5-dialog header-text={edit ? "Edit Donor" : "Add Donor"} ref={this.dialogRef}>
         <div className="dialog-container">
           <ui5-title level="H4">Personal Information</ui5-title>
-          <ui5-input ref={this.nameInputRef} type="Text" value={name} placeholder="Full Name" />
-          <ui5-input ref={this.telephoneInputRef} type="Tel" value={telephone} placeholder="Telephone" />
+          <ui5-input ref={this.nameInputRef} type="Text" value={name} placeholder="Name" />
+          <ui5-input ref={this.lastNameInputRef} type="Text" value={lastName} placeholder="Last Name" />
+          <ui5-input ref={this.telephoneInputRef} type="Tel" value={phone} placeholder="Telephone" />
+          <ui5-input ref={this.emailInputRef} type="Text" value={email} placeholder="Email" />
+          <ui5-input ref={this.cityInputRef} type="Text" value={city} placeholder="City" />
           <div className="inline-container">
             <ui5-input ref={this.ageInputRef} type="Number" value={age} placeholder="Age" />
             {edit ? <ui5-select ref={this.genderInputRef} placeholder="Gender" required>
@@ -172,22 +212,14 @@ class DonorDialog extends Component {
                 {GENDER.map(entry => <ui5-cb-item text={entry}></ui5-cb-item>)}
               </ui5-combobox>
             }
-            {edit ? <ui5-select ref={this.bloodInputRef} placeholder="Blood" required>
-              {BLOOD.map(entry => <ui5-option selected={entry === blood ? true : undefined}>{entry}</ui5-option>)}
+            {edit ? <ui5-select ref={this.bloodInputRef} placeholder="Blood Group" required>
+              {BLOOD.map(entry => <ui5-option selected={entry === bloodGroup ? true : undefined}>{entry}</ui5-option>)}
             </ui5-select> :
-              <ui5-combobox ref={this.bloodInputCbRef} placeholder="Blood" required value={blood}>
+              <ui5-combobox ref={this.bloodInputCbRef} placeholder="Blood Group" required value={bloodGroup}>
                 {BLOOD.map(entry => <ui5-cb-item text={entry}></ui5-cb-item>)}
               </ui5-combobox>
             }
           </div>
-          <ui5-title level="H4">Blood Center</ui5-title>
-          {edit ? <ui5-select ref={this.centerInputRef} placeholder="Blood" required>
-            {CENTERS.map(entry => <ui5-option selected={entry === center ? true : undefined}>{entry}</ui5-option>)}
-          </ui5-select> :
-            <ui5-combobox ref={this.centerInputCbRef} placeholder="Choose Blood Center" required value={center}>
-              {CENTERS.map(entry => <ui5-cb-item text={entry}></ui5-cb-item>)}
-            </ui5-combobox>
-          }
         </div>
         <div slot="footer" className="footer">
           <ui5-button design="Emphasized" ref={this.createButtonRef}>{edit ? "Save" : "Add"}</ui5-button>

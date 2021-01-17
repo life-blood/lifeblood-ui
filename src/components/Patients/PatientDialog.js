@@ -6,17 +6,10 @@ import "@ui5/webcomponents/dist/ComboBoxItem";
 import "@ui5/webcomponents/dist/Select";
 
 import "./PatientDialog.css";
+import { ACCOUNT_SERVICE_API } from "../../app-config";
 
 const BLOOD = ['0', 'A', 'B', 'AB'];
 const GENDER = ['Male', 'Female'];
-const CENTERS = [
-  "РАЙОНЕН Ц-Р ПО ТРАНСФУЗИОННА ХЕМАТОЛОГИЯ - Стара Загора",
-  "Районен център по трансфузионна хематология (РЦТХ) - Плевен",
-  "Кръвен център - Бургас",
-  "РЦ по трансфузионна хематология - Пловдив",
-  "Национален център по клинична и трансфузионна хематология - София",
-  "Районен център по трансфузионна хематология - Варна"
-];
 
 class PatientDialog extends Component {
 
@@ -25,11 +18,11 @@ class PatientDialog extends Component {
 
     this.state = {
       name: '',
-      telephone: '',
-      age: '',
-      gender: '',
-      blood: '',
-      center: ''
+      lastName: '',
+      bloodGroup: '',
+      bloodCenter: '',
+      city: '',
+      centers: window.mapsData.map((map)=> map.name)
     };
 
     this.dialogRef = React.createRef();
@@ -37,36 +30,33 @@ class PatientDialog extends Component {
     this.cancelButtonRef = React.createRef();
 
     this.nameInputRef = React.createRef();
-    this.telephoneInputRef = React.createRef();
-    this.ageInputRef = React.createRef();
-    this.genderInputRef = React.createRef();
-    this.genderInputCbRef = React.createRef();
+    this.lastNameInputRef = React.createRef();
     this.bloodInputRef = React.createRef();
     this.bloodInputCbRef = React.createRef();
     this.centerInputRef = React.createRef();
     this.centerInputCbRef = React.createRef();
+    this.cityInputRef = React.createRef();
 
     this.create = this.create.bind(this);
     this.close = this.close.bind(this);
     this.setInitialState = this.setInitialState.bind(this);
 
     this.onNameChange = this.onNameChange.bind(this);
-    this.onTelephoneChange = this.onTelephoneChange.bind(this);
-    this.onAgeChange = this.onAgeChange.bind(this);
-    this.onGenderChange = this.onGenderChange.bind(this);
+    this.onLastNameChange = this.onLastNameChange.bind(this);
     this.onBloodChange = this.onBloodChange.bind(this);
     this.onCenterChange = this.onCenterChange.bind(this);
+    this.onAddressChange = this.onAddressChange.bind(this);
+
     this.beforeOpen = this.beforeOpen.bind(this);
   }
 
   setInitialState() {
     this.setState({
       name: '',
-      telephone: '',
-      age: '',
-      gender: '',
-      blood: '',
-      center: ''
+      lastName: '',
+      bloodGroup: '',
+      bloodCenter: '',
+      city: ''
     });
   }
 
@@ -76,8 +66,8 @@ class PatientDialog extends Component {
       this.cancelButtonRef.current.addEventListener("click", this.close);
 
       this.nameInputRef.current.addEventListener("input", this.onNameChange);
-      this.telephoneInputRef.current.addEventListener("input", this.onTelephoneChange);
-      this.ageInputRef.current.addEventListener("input", this.onAgeChange);
+      this.lastNameInputRef.current.addEventListener("input", this.onLastNameChange);
+      this.cityInputRef.current.addEventListener("input", this.onAddressChange);
     }
   }
 
@@ -87,15 +77,14 @@ class PatientDialog extends Component {
       this.cancelButtonRef.current.removeEventListener("click", this.close);
 
       this.nameInputRef.current.removeEventListener("input", this.onNameChange);
-      this.telephoneInputRef.current.removeEventListener("input", this.onTelephoneChange);
-      this.ageInputRef.current.removeEventListener("input", this.onAgeChange);
+      this.lastNameInputRef.current.removeEventListener("input", this.onLastNameChange);
+      this.cityInputRef.current.removeEventListener("input", this.onAddressChange);
+      
     }
     if (this.props.edit) {
-      this.genderInputRef.current.removeEventListener("change", this.onGenderChange);
       this.bloodInputRef.current.removeEventListener("change", this.onBloodChange);
       this.centerInputRef.current.removeEventListener("change", this.onCenterChange);
     } else {
-      this.genderInputCbRef.current.removeEventListener("change", this.onGenderChange);
       this.bloodInputCbRef.current.removeEventListener("change", this.onBloodChange);
       this.centerInputCbRef.current.removeEventListener("change", this.onCenterChange);
     }
@@ -103,11 +92,9 @@ class PatientDialog extends Component {
 
   beforeOpen() {
     if (this.props.edit) {
-      this.genderInputRef.current.addEventListener("change", this.onGenderChange);
       this.bloodInputRef.current.addEventListener("change", this.onBloodChange);
       this.centerInputRef.current.addEventListener("change", this.onCenterChange);
     } else {
-      this.genderInputCbRef.current.addEventListener("change", this.onGenderChange);
       this.bloodInputCbRef.current.addEventListener("change", this.onBloodChange);
       this.centerInputCbRef.current.addEventListener("change", this.onCenterChange);
     }
@@ -126,6 +113,43 @@ class PatientDialog extends Component {
   }
 
   create() {
+    if (this.props.edit) {
+      const url = ACCOUNT_SERVICE_API + `/acceptors/${this.state.id}`;
+      fetch(url, {
+          method: 'PUT',
+          body: JSON.stringify({
+              "name": this.state.name,
+              "lastName": this.state.lastName,
+              "bloodCenter": this.state.bloodCenter,
+              "bloodGroup": this.state.bloodGroup,
+              "city": this.state.city
+          })
+        }).then(() => {
+          console.log("Acceptor was edited successfully!");
+          this.props.doRefresh();
+        }, (err) => {
+          console.error(err);
+          console.log("Failed to edit acceptor.");
+        });
+    } else {
+      const url = ACCOUNT_SERVICE_API + `/acceptors`;
+      fetch(url, {
+          method: 'POST',
+          body: JSON.stringify({
+              "name": this.state.name,
+              "lastName": this.state.lastName,
+              "bloodCenter": this.state.bloodCenter,
+              "bloodGroup": this.state.bloodGroup,
+              "city": this.state.city
+          })
+        }).then(() => {
+          console.log("Acceptor was added successfully!");
+          this.props.doRefresh();
+        }, (err) => {
+          console.error(err);
+          console.log("Failed to add acceptor.");
+        });
+    }
     this.close();
   }
 
@@ -133,59 +157,48 @@ class PatientDialog extends Component {
     this.setState({ name: event.target.value });
   }
 
-  onTelephoneChange(event) {
-    this.setState({ telephone: event.target.value });
+  onLastNameChange(event) {
+    this.setState({ lastName: event.target.value });
   }
 
-  onAgeChange(event) {
-    this.setState({ age: event.target.value });
-  }
-
-  onGenderChange(event) {
-    this.setState({ gender: event.target.value || event.target.selectedOption.innerText });
+  onAddressChange(event) {
+    this.setState({ city: event.target.value });
   }
 
   onBloodChange(event) {
-    this.setState({ blood: event.target.value || event.target.selectedOption.innerText });
+    this.setState({ bloodGroup: event.target.value || event.target.selectedOption.innerText });
   }
 
   onCenterChange(event) {
-    this.setState({ center: event.target.value || event.target.selectedOption.innerText });
+    this.setState({ bloodCenter: event.target.value || event.target.selectedOption.innerText });
   }
 
   render() {
     const { edit } = this.props;
-    const { name, telephone, gender, age, blood, center } = this.state;
+    const { name, lastName, city, bloodGroup, bloodCenter, centers } = this.state;
 
     return (
       <ui5-dialog header-text={edit ? "Edit Patient" : "Add Patient"} ref={this.dialogRef}>
         <div className="dialog-container">
           <ui5-title level="H4">Personal Information</ui5-title>
-          <ui5-input ref={this.nameInputRef} type="Text" value={name} placeholder="Full Name" />
-          <ui5-input ref={this.telephoneInputRef} type="Tel" value={telephone} placeholder="Telephone" />
+          <ui5-input ref={this.nameInputRef} type="Text" value={name} placeholder="Name" />
+          <ui5-input ref={this.lastNameInputRef} type="Text" value={lastName} placeholder="Last Name" />
+          <ui5-input ref={this.cityInputRef} type="Text" value={city} placeholder="City" />
           <div className="inline-container">
-            <ui5-input ref={this.ageInputRef} type="Number" value={age} placeholder="Age" />
-            {edit ? <ui5-select ref={this.genderInputRef} placeholder="Gender" required>
-              {GENDER.map(entry => <ui5-option selected={entry === gender ? true : undefined}>{entry}</ui5-option>)}
+            {edit ? <ui5-select ref={this.bloodInputRef} placeholder="Blood Group" required>
+              {BLOOD.map(entry => <ui5-option selected={entry === bloodGroup ? true : undefined}>{entry}</ui5-option>)}
             </ui5-select> :
-              <ui5-combobox ref={this.genderInputCbRef} placeholder="Gender" required value={gender}>
-                {GENDER.map(entry => <ui5-cb-item text={entry}></ui5-cb-item>)}
-              </ui5-combobox>
-            }
-            {edit ? <ui5-select ref={this.bloodInputRef} placeholder="Blood" required>
-              {BLOOD.map(entry => <ui5-option selected={entry === blood ? true : undefined}>{entry}</ui5-option>)}
-            </ui5-select> :
-              <ui5-combobox ref={this.bloodInputCbRef} placeholder="Blood" required value={blood}>
+              <ui5-combobox ref={this.bloodInputCbRef} placeholder="Blood Group" required value={bloodGroup}>
                 {BLOOD.map(entry => <ui5-cb-item text={entry}></ui5-cb-item>)}
               </ui5-combobox>
             }
           </div>
           <ui5-title level="H4">Blood Center</ui5-title>
-          {edit ? <ui5-select ref={this.centerInputRef} placeholder="Blood" required>
-            {CENTERS.map(entry => <ui5-option selected={entry === center ? true : undefined}>{entry}</ui5-option>)}
+          {edit ? <ui5-select ref={this.centerInputRef} placeholder="Blood Center" required>
+            {centers.map(entry => <ui5-option selected={entry === bloodCenter ? true : undefined}>{entry}</ui5-option>)}
           </ui5-select> :
-            <ui5-combobox ref={this.centerInputCbRef} placeholder="Choose Blood Center" required value={center}>
-              {CENTERS.map(entry => <ui5-cb-item text={entry}></ui5-cb-item>)}
+            <ui5-combobox ref={this.centerInputCbRef} placeholder="Choose Blood Center" required value={bloodCenter}>
+              {centers.map(entry => <ui5-cb-item text={entry}></ui5-cb-item>)}
             </ui5-combobox>
           }
         </div>

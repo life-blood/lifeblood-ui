@@ -79,8 +79,7 @@ class DonateDialog extends Component {
           "userID": localStorage.getItem("userID") || "",
           "bloodcenter": hospital,
           "date": date,
-          // TODO: Save current user BloodType on login and reuse it.
-          "bloodType": "A",
+          "bloodType": window.localStorage.getItem("bloodGroup") || "A",
           "amount": "-",
           "status": "In Progress"
         })
@@ -97,7 +96,6 @@ class DonateDialog extends Component {
 
   render() {
     const { hospitals } = this.state;
-    console.log(hospitals);
 
     return (
       <ui5-dialog header-text="Donation Request" ref={this.dialogRef}>

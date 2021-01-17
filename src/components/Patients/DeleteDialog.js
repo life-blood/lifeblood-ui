@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 
 import "@ui5/webcomponents/dist/Dialog";
 
+import { ACCOUNT_SERVICE_API } from "../../app-config";
+
 class DeleteDialog extends Component {
 
   constructor(props) {
@@ -45,10 +47,18 @@ class DeleteDialog extends Component {
   }
 
   onDelete() {
-    // DELETE
+    const url = ACCOUNT_SERVICE_API + `/acceptors/${this.state.patientId}`;
     console.log("patient ID: " + this.state.patientId);
+    fetch(url, {
+        method: 'DELETE'
+      }).then(() => {
+        console.log("Acceptor was removed successfully!");
+        this.props.doRefresh();
+      }, (err) => {
+        console.error(err);
+        console.log("Failed to remove acceptor.");
+      });
 
-    this.props.doRefresh();
     this.close();
   }
 
