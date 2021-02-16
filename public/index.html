@@ -32,38 +32,45 @@
     -->
   <title>LifeBlood</title>
 
-  <!-- The core Firebase JS SDK is always required and must be listed first -->
-  <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
-
-  <!-- TODO: Add SDKs for Firebase products that you want to use
-      https://firebase.google.com/docs/web/setup#available-libraries -->
-  <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-analytics.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-database.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-firestore.js"></script>
-  
   <script>
-    // Your web app's Firebase configuration
-    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-    var firebaseConfig = {
-      apiKey: "AIzaSyCdqTUc_NESu4qNLojSfCSu9Ji6tc0vuKs",
-      authDomain: "lifeblood-9332a.firebaseapp.com",
-      databaseURL: "https://lifeblood-9332a-default-rtdb.europe-west1.firebasedatabase.app",
-      projectId: "lifeblood-9332a",
-      storageBucket: "lifeblood-9332a.appspot.com",
-      messagingSenderId: "284563809665",
-      appId: "1:284563809665:web:df27142112370e4c3b7480",
-      measurementId: "G-12Q1LSRMR7"
-    };
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    firebase.analytics();
-
     function fetchMapsData() {
-      return firebase.database().ref('/hospital').on('value', function (snapshot) {
-        console.log('Hospitals data updated!');
-        window.mapsData = snapshot.val();
-        console.log(window.mapsData);
-      });
+        window.mapsData = [ {
+        "address" : "Адрес бул. 'Цар Освободител' 100",
+        "lat" : 43.21476771342051,
+        "lng" : 27.918031648984652,
+        "name" : "Национален център по клинична и трансфузионна хематология - Варна",
+        "telephone" : "Телефон: +35952681811"
+      }, {
+        "address" : "Адрес: ул. „Братя Миладинови“ 112, 1202 Център, София",
+        "lat" : 42.708697852837645,
+        "lng" : 23.320315655520577,
+        "name" : "Национален център по клинична и трансфузионна хематология - София",
+        "telephone" : "Телефон: +35929210417"
+      }, {
+        "address" : "Адрес: Пловдив 234, 4027 Гагарин, Пловдив",
+        "lat" : 42.26790449315521,
+        "lng" : 24.67422955050839,
+        "name" : "РЦ по трансфузионна хематология - Пловдив",
+        "telephone" : "Телефон: +35932904402"
+      }, {
+        "address" : "Адрес: бул. „Стефан Стамболов“ 73, 8018 ж.к. Зорница, Бургас",
+        "lat" : 42.51444757865788,
+        "lng" : 27.465726755515288,
+        "name" : "Кръвен център - Бургас",
+        "telephone" : "Телефон: +359879357474"
+      }, {
+        "address" : "Адрес: ул. „Независимост“, 7000 Русе Център, Русе",
+        "lat" : 43.857377375907596,
+        "lng" : 25.960651582540887,
+        "name" : "Районен център по трансфузионна хематология (РЦТХ) - Плевен",
+        "telephone" : "Телефон: +35982887236"
+      }, {
+        "address" : "Адрес: ул. „Генерал Столетов“ 2, 6003 кв. Възраждане, Стара Загора",
+        "lat" : 42.42486231842029,
+        "lng" : 25.611364276677836,
+        "name" : "РАЙОНЕН Ц-Р ПО ТРАНСФУЗИОННА ХЕМАТОЛОГИЯ - Стара Загора",
+        "telephone" : "Телефон: +35942611404"
+      } ]
     }
 
     fetchMapsData();

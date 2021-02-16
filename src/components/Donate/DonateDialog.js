@@ -77,7 +77,7 @@ class DonateDialog extends Component {
         method: 'POST',
         body: JSON.stringify({
           "userID": localStorage.getItem("userID") || "",
-          "bloodcenter": hospital,
+          "bloodCenter": hospital,
           "date": date,
           "bloodType": window.localStorage.getItem("bloodGroup") || "A",
           "amount": "-",
